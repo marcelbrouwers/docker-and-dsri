@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> /* set the CSS */
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2px;
+}
+
+</style>
+<body>
+<!-- Initialize a select button -->
+<select id="selectButton"></select>
+<!-- load the d3.js library -->    	
+<h2>Covid-19: Daily new cases</h2>
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="https://d3js.org/d3-array.v2.min.js"></script>
+<script>
+
+// set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 50, left: 70},
+    width = 1000 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+// parse the date / time
+var parseTime = d3.timeParse("%Y-%m-%d");
+
+// set the ranges
+//var x = d3.scaleTime().range([0, width]);
+var x = d3.scaleTime().range([0, width]);
+var y = d3.scaleLinear().range([height, 0]);
+
+// define the line
+var valueline = d3.line()
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.new_cases); });
+
+// append the svg obgect to the body of the page
+// appends a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Get the data
+d3.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv").then(data => {
+//var allGroup = d3.map(data, function(d){return d.location})
+//allGroup = allGroup.filter(function(v,i) { return allGroup.indexOf(v) == i; });
+//console.log(allGroup)
+// add the options to the button
+var allGroup = [
+  "Afghanistan",
+  "Africa",
+  "Albania",
+  "Algeria",
+  "Andorra",
+  "Angola",
+  "Anguilla",
+  "Antigua and Barbuda",
+  "Argentina",
+  "Armenia",
+  "Asia",
+  "Australia",
+  "Austria",
+  "Azerbaijan",
+  "Bahamas",
+  "Bahrain",
+  "Bangladesh",
+  "Barbados",
+  "Belarus",
+  "Belgium",
+  "Belize",
+  "Benin",
+  "Bermuda",
+  "Bhutan",
+  "Bolivia",
+  "Bosnia and Herzegovina",
+  "Botswana",
+  "Brazil",
+  "Brunei",
+  "Bulgaria",
+  "Burkina Faso",
+  "Burundi",
+  "Cambodia",
+  "Cameroon",
+  "Canada",
+  "Cape Verde",
+  "Cayman Islands",
+  "Central African Republic",
+  "Chad",
+  "Chile",
+  "China",
+  "Colombia",
+  "Comoros",
+  "Congo",
+  "Costa Rica",
+  "Cote d'Ivoire",
+  "Croatia",
+  "Cuba",
+  "Cyprus",
+  "Czechia",
+  "Democratic Republic of Congo",
+  "Denmark",
+  "Djibouti",
+  "Dominica",
+  "Dominican Republic",
+  "Ecuador",
+  "Egypt",
+  "El Salvador",
+  "Equatorial Guinea",
+  "Eritrea",
+  "Estonia",
+  "Eswatini",
+  "Ethiopia",
+  "Europe",
+  "European Union",
+  "Faeroe Islands",
+  "Falkland Islands",
+  "Fiji",
+  "Finland",
+  "France",
+  "Gabon",
+  "Gambia",
+  "Georgia",
+  "Germany",
+  "Ghana",
+  "Gibraltar",
+  "Greece",
+  "Greenland",
+  "Grenada",
+  "Guatemala",
+  "Guernsey",
+  "Guinea",
+  "Guinea-Bissau",
+  "Guyana",
+  "Haiti",
+  "Honduras",
+  "Hong Kong",
+  "Hungary",
+  "Iceland",
+  "India",
+  "Indonesia",
+  "International",
+  "Iran",
+  "Iraq",
+  "Ireland",
+  "Isle of Man",
+  "Israel",
+  "Italy",
+  "Jamaica",
+  "Japan",
+  "Jersey",
+  "Jordan",
+  "Kazakhstan",
+  "Kenya",
+  "Kosovo",
+  "Kuwait",
+  "Kyrgyzstan",
+  "Laos",
+  "Latvia",
+  "Lebanon",
+  "Lesotho",
+  "Liberia",
+  "Libya",
+  "Liechtenstein",
+  "Lithuania",
+  "Luxembourg",
+  "Macao",
+  "Madagascar",
+  "Malawi",
+  "Malaysia",
+  "Maldives",
+  "Mali",
+  "Malta",
+  "Marshall Islands",
+  "Mauritania",
+  "Mauritius",
+  "Mexico",
+  "Micronesia (country)",
+  "Moldova",
+  "Monaco",
+  "Mongolia",
+  "Montenegro",
+  "Montserrat",
+  "Morocco",
+  "Mozambique",
+  "Myanmar",
+  "Namibia",
+  "Nepal",
+  "Netherlands",
+  "New Zealand",
+  "Nicaragua",
+  "Niger",
+  "Nigeria",
+  "North America",
+  "North Macedonia",
+  "Northern Cyprus",
+  "Norway",
+  "Oceania",
+  "Oman",
+  "Pakistan",
+  "Palestine",
+  "Panama",
+  "Papua New Guinea",
+  "Paraguay",
+  "Peru",
+  "Philippines",
+  "Poland",
+  "Portugal",
+  "Qatar",
+  "Romania",
+  "Russia",
+  "Rwanda",
+  "Saint Helena",
+  "Saint Kitts and Nevis",
+  "Saint Lucia",
+  "Saint Vincent and the Grenadines",
+  "Samoa",
+  "San Marino",
+  "Sao Tome and Principe",
+  "Saudi Arabia",
+  "Senegal",
+  "Serbia",
+  "Seychelles",
+  "Sierra Leone",
+  "Singapore",
+  "Slovakia",
+  "Slovenia",
+  "Solomon Islands",
+  "Somalia",
+  "South Africa",
+  "South America",
+  "South Korea",
+  "South Sudan",
+  "Spain",
+  "Sri Lanka",
+  "Sudan",
+  "Suriname",
+  "Sweden",
+  "Switzerland",
+  "Syria",
+  "Taiwan",
+  "Tajikistan",
+  "Tanzania",
+  "Thailand",
+  "Timor",
+  "Togo",
+  "Trinidad and Tobago",
+  "Tunisia",
+  "Turkey",
+  "Turks and Caicos Islands",
+  "Uganda",
+  "Ukraine",
+  "United Arab Emirates",
+  "United Kingdom",
+  "United States",
+  "Uruguay",
+  "Uzbekistan",
+  "Vanuatu",
+  "Vatican",
+  "Venezuela",
+  "Vietnam",
+  "World",
+  "Yemen",
+  "Zambia",
+  "Zimbabwe"
+]
+
+var grouped_data = d3.group(data, d => d.location);
+//console.log(grouped_data.keys());
+  // format the data
+
+  d3.select("#selectButton")
+      .selectAll('myOptions')
+     	.data(allGroup)
+      .enter()
+    	.append('option')
+      .text(function (d) { return d; }) // text showed in the menu
+      .attr("value", function (d) { return d; }) // corresponding value returned by the button
+
+
+
+  grouped_data_selected = grouped_data.get(allGroup[0])
+  grouped_data_selected.forEach(function(d) {
+      //d = d3.group(d, d => d.location);
+      //console.log(d);
+      d.date = parseTime(d.date);
+      //console.log(d.date);
+      d.new_cases = +d.new_cases;
+      //console.log(d.new_cases);
+  });
+
+  data
+  // Scale the range of the data
+  x.domain(d3.extent(grouped_data_selected, function(d) { return d.date; }));
+  y.domain([0, d3.max(grouped_data_selected, function(d) { return d.new_cases; })]);
+  //console.log(grouped_data);
+  // Add the valueline path.
+  svg.append("path")
+      .data([grouped_data_selected])
+      .attr("class", "line")
+      .attr("d", valueline);
+
+  // Add the x Axis
+  svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  // Add the y Axis
+  svg.append("g")
+      .call(d3.axisLeft(y));
+
+    // A function that update the chart
+    function update(selectedGroup) {
+        d3.select("svg").remove();
+// append the svg obgect to the body of the page
+// appends a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+            // set the ranges
+        var x = d3.scaleTime().range([0, width]);
+        var y = d3.scaleLinear().range([height, 0]);
+
+// define the line
+    var valueline = d3.line()
+        .x(function(d) { return x(d.date); })
+        .y(function(d) { return y(d.new_cases); });
+
+        grouped_data_selected = grouped_data.get(selectedGroup)
+        grouped_data_selected.forEach(function(d) {
+      //d = d3.group(d, d => d.location);
+      //console.log(d);
+      d.date = parseTime(d.date);
+      //console.log(d.date);
+      d.new_cases = +d.new_cases;
+      //console.log(d.new_cases);
+  });
+
+  data
+  // Scale the range of the data
+  x.domain(d3.extent(grouped_data_selected, function(d) { return d.date; }));
+  y.domain([0, d3.max(grouped_data_selected, function(d) { return d.new_cases; })]);
+  //console.log(grouped_data);
+  // Add the valueline path.
+  svg.append("path")
+      .data([grouped_data_selected])
+      .attr("class", "line")
+      .attr("d", valueline);
+
+  // Add the x Axis
+  svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  // Add the y Axis
+  svg.append("g")
+      .call(d3.axisLeft(y));
+
+    }
+
+    // When the button is changed, run the updateChart function
+    d3.select("#selectButton").on("change", function(d) {
+        // recover the option that has been chosen
+        var selectedOption = d3.select(this).property("value")
+        // run the updateChart function with this selected option
+        update(selectedOption)
+    })
+
+
+});
+
+</script>
+
+
+
+
+</body>
+
